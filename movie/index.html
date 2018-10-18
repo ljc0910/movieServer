@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="UTF-8">
+<title>jc电影</title>
+</head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.1/jquery.min.js"></script>
+<script src="enjoyhint/enjoyhint.min.js"></script>
+<link href="enjoyhint/enjoyhint.css" rel="stylesheet">
+<!-- Bootstrap -->
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+<!-- Latest compiled and minified JavaScript -->
+<script src="bootstrap.min.js"></script>
+<style>
+	body, html { 
+		margin:0;
+		overflow: hidden;
+		padding: 0
+	}
+	.cont-box{position: absolute;width: 400px;height: 36px;left: 50%;top: 30%;margin-left: -200px;border: 1px solid #ccc;box-sizing: content-box;}
+	.cont-box p{color: #ccc;text-align: center;padding-top: 50px;font-size: 12px;}
+	.cont-box p:nth-of-type(2){padding-top: 10px;}
+	input{height: 36px;outline: none;width: 300px;float: left;background: rgba(255,255,255,0.2);color: #fff;border: none;font-size: 16px;text-indent: 20px;}
+	.btn{color: #fff;cursor: pointer;width: 100px;padding:0;border-radius:inherit;height: 36px;text-align: center;display: inline-block;line-height: 36px;transition: linear all 0.5s;}
+	.btn:hover{background: rgba(255,255,255,0.4);transition: linear all 0.5s;}
+	.loading{background: rgba(255,255,255,0.4);cursor: not-allowed;}
+	.video-box{position: absolute;display: none;width: 800px;height: 400px;left: 50%;top: 30%;margin-left: -400px;}
+	iframe{width: 100%;height: 100%;border: none;position: absolute;left: 0;top: 0;}
+	.close-btn{position: absolute;width:20px;height:20px;background:#fff;right: -10px;top: -10px;line-height: 18px;cursor:pointer;font-size:14px;text-align: center;border-radius: 50%;background: #000;color: #fff;border: 1px solid #fff;z-index: 2;}
+	.close-list{position: absolute;width:20px;height:20px;background:#fff;right: 4px;top: 4px;line-height: 18px;cursor:pointer;font-size:14px;text-align: center;border-radius: 50%;background: #000;color: #fff;border: 1px solid #fff;z-index: 2;}
+	.close-btn:hover{color: red;transition: linear all 1s; border: 1px solid red;}
+	.close-list:hover{color: red;transition: linear all 1s; border: 1px solid red;}
+	.video-box h2{color: #fff;}
+	.video-list{position: absolute;z-index:1;display: none;width: 830px;height: 400px;left: 50%;top: 25%;margin-left: -400px;overflow: hidden;}
+	#video-list{position: absolute;z-index:-1;width: 830px;height: 400px;left: 50%;top: 25%;margin-left: -400px;}
+	.video-list img{height: 400px;width: 280px;float: left;padding:0 4px 0 0;}
+	.movieDetail{width: 300px;height:400px;float: left;overflow: auto;padding:0 4px;}
+	.movieDetail h2{font-size: 20px;color: #fff;}
+	.movieDetail p{font-size: 12px;color: #fff;}
+	
+	.video-list::-webkit-scrollbar {/*滚动条整体样式*/
+		width: 10px;     /*高宽分别对应横竖滚动条的尺寸*/
+		height: 10px;
+    }
+    .video-list::-webkit-scrollbar-thumb {/*滚动条里面小方块*/
+		border-radius: 5px;
+		height:0px;
+        -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+        background: #ccc;
+    }
+    .video-list::-webkit-scrollbar-track {/*滚动条里面轨道*/
+        -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+        border-radius: 0;
+        background: rgba(255,255,255,0);
+    }
+	.movieDetail::-webkit-scrollbar {/*滚动条整体样式*/
+		width: 10px;     /*高宽分别对应横竖滚动条的尺寸*/
+		height: 10px;
+    }
+    .movieDetail::-webkit-scrollbar-thumb {/*滚动条里面小方块*/
+		border-radius: 5px;
+		height:0px;
+        -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+        background: #ccc;;
+    }
+    .movieDetail::-webkit-scrollbar-track {/*滚动条里面轨道*/
+		-webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+        border-radius: 0;
+        background: rgba(255,255,255,0);
+    }
+	.srcList::-webkit-scrollbar {/*滚动条整体样式*/
+            width: 10px;     /*高宽分别对应横竖滚动条的尺寸*/
+            height: 10px;
+    }
+    .srcList::-webkit-scrollbar-thumb {/*滚动条里面小方块*/
+        border-radius: 5px;
+		height:0px;
+        -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+        background: #ccc;
+    }
+    .srcList::-webkit-scrollbar-track {/*滚动条里面轨道*/
+        -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+        border-radius: 0;
+        background: rgba(255,255,255,0);
+    }
+    .srcList{padding: 0 4px;width:196px;height:400px;float: left;overflow-y:auto;}
+    .srcList h2{color: #fff;font-size: 20px;}
+    .srcList p{color: #fff;border: 1px solid #ccc;border-radius: 16px;padding: 0px 12px;display: inline-block;cursor: pointer;margin:3px 6px;transition: linear all 0.5s;}
+    .srcList p:hover{background: rgba(255,255,255,0.3);transition: linear all 0.5s;}
+    .srcList i{color: #fff;}
+    .srcList span{display: block;font-size: 14px;color: #fff;padding: 30px 0;}
+    .srcList a{color: dodgerblue;}
+    input::-webkit-input-placeholder {font-size: 14px;font-style: italic;}
+	.movieDetail span{color: #fff;font-size: 12px;}
+	.video-list-cont{overflow: hidden;width: 800px;transition: all 500ms linear;box-shadow: 0px 0px 10px rgba(255,255,255,0.2);text-align: center;}
+	.qqme{display: block;width: 30px;height:30px;font-size:16px;border-radius:6px;background: #fff;position: absolute;right: 40px;bottom: 20%;text-align: center;line-height: 30px;text-decoration: none;transition: all linear 0.5s;}
+	.qqme:hover{background:#337ab7;color:#fff;text-decoration: none; }
+</style>
+<body>
+	<a class="qqme" target= _blank href="http://wpa.qq.com/msgrd?v=3&uin=1451895075&site=qq&menu=yes">
+		QQ
+	</a>
+	<div class="cont-box">
+		<input type="text" placeholder="输入链接可直接播放\电影名可检索播放"/>
+		<div class="btn" onclick="search()">播放</div>
+	</div>
+	<div id='video-list'></div>
+	<div class="video-list">
+		
+	</div>
+	<div class="video-box">
+		<h2>加载中。。。</h2>
+		<div class="close-btn" onclick="closeMovie()">x</div>
+	</div>
+	<canvas id=c></canvas>
+<script>
+var w = c.width = window.innerWidth,
+    h = c.height = window.innerHeight,
+    ctx = c.getContext('2d'),
+    
+    //parameters
+    total = (w/8)|0,
+    accelleration = .05,
+    lineAlpha = .02,
+    range = 25,
+    
+    //afterinitial calculations
+    size = w/total,
+    occupation = w/total,
+    repaintColor = 'rgba(0, 0, 0, .04)'
+    colors = [],
+    dots = [],
+    dotsVel = [];
+
+//setting the colors' hue
+//and y level for all dots
+var portion = 360/total;
+for(var i = 0; i < total; ++i){
+  colors[i] = portion * i;
+  
+  dots[i] = h;
+  dotsVel[i] = 10;
+}
+
+function anim(){
+  window.requestAnimationFrame(anim);
+  
+  ctx.fillStyle = repaintColor;
+  ctx.fillRect(0, 0, w, h);
+  
+  for(var i = 0; i < total; ++i){
+    var currentY = dots[i] - 1;
+    dots[i] += dotsVel[i] += accelleration;
+    
+    for(var j = i+1; j < i+range && j < total; ++j){
+      if(Math.abs(dots[i] - dots[j]) <= range*size){
+        ctx.strokeStyle = 'hsla(hue, 80%, 50%, alp)'.replace('hue', (colors[i] + colors[j] + 360)/2 - 180).replace('alp', lineAlpha);
+        ctx.beginPath();
+        ctx.moveTo(i * occupation, dots[i]);
+        ctx.lineTo(j * occupation, dots[j]);
+        ctx.stroke();
+      }
+    }
+    
+    if(dots[i] > h && Math.random() < .01){
+      dots[i] = dotsVel[i] = 0;
+    }
+  }
+}
+
+anim();
+</script>
+<script src="hint-sequence.js"></script>
+<script src="./cookie.js"></script>
+<script>
+	const API_PROXY = 'https://bird.ioliu.cn/v1/?url=';
+	function search(){
+		var searchVal = document.getElementsByTagName('input')[0].value;
+		if(searchVal.length<12){
+			if(searchVal.length===0){
+				alert('请输入检索内容')
+			}else{
+				$('.cont-box').children('.btn').empty().removeAttr("onclick");
+				$('.cont-box').children('.btn').html('检索中').attr('class','btn loading')
+				var numi = 0
+				var poitT = setInterval(function(){
+					if(numi<3){
+						numi++;
+						$('.cont-box').children('.btn').append(`<span>.<span>`)
+					}else{
+						numi = 0
+						$('.cont-box').children('.btn').empty().html('检索中')
+					}
+				},500)
+				$.ajax({
+					type:'get',
+					data:{movieName:searchVal},
+					url:'http://www.jcgg.xyz:4001/getMovie',
+					success:function(data){
+						console.log(data)
+						$('.cont-box').children('.btn').empty().attr("onclick","search()");
+						$('.cont-box').children('.btn').html('播放').attr('class','btn')
+						clearInterval(poitT)
+						if(data.success){
+							$('.video-list').css("display","block")
+							$('.cont-box').css("display","none")
+							for(var i =0;i<data.result.length;i++){
+								var info = data.result[i]
+								$('.video-list').append(`
+								<div class ='video-list-cont'>
+									<img src='${info.result.cover}'/>
+									<div class='movieDetail'>
+										<h2>片名:${info.result.title}</h2>
+									</div>
+									<div class = 'srcList'>
+										<h2>播放源:</h2>
+									</div>
+								</div>
+									`)
+								info.result.list.forEach((v,k)=>{
+									$('.movieDetail').eq(i).append(`
+										<div><span>${v.type}</span><span>${v.info}:</span></div>
+									`)
+								})
+								info.result.href.forEach((v,k)=>{
+									$('.srcList').eq(i).append(`
+										<p onclick = "startMovie(\'${v.srcHref}\')">${v.info}</p>
+									`)
+								})
+							}
+								$('.video-list').append(`
+									<div class = 'close-list' onclick="closeList()">
+										x
+									</div>
+								`)
+							//
+							// var m=0;
+							// window.onmousewheel=function(e){
+							// 	e=e || window.event;
+							// 	throttle(e)
+							// }
+							//
+							var m = 0
+							function throttle(e){
+								e=e || window.event;
+								if(e.wheelDelta>0){
+									m = m>-1?0: m+100
+									$(".video-list-cont").css({"transform": "translateY("+m+"%)"});
+								}else{
+									m = m -100;
+									if(Math.abs(m)>(data.result.length-1)*100){
+										m = -(data.result.length-1)*100
+									}
+									$(".video-list-cont").css({"transform": "translateY("+m+"%)"});
+								}
+							}
+							window.onmousewheel=debounce(throttle,300,600);
+						}else{
+							alert('找不到该片源')
+						}
+					},
+					error:function(jqXHR){
+						//请求失败函数内容
+						clearInterval(poitT)
+					}
+				});	
+			}
+		}else{
+			var videoSrc = 'http://api.greatchina56.com/?url=' + document.getElementsByTagName('input')[0].value;
+			document.getElementsByClassName('cont-box')[0].style.display = 'none'
+			document.getElementsByClassName('video-box')[0].style.display = 'block'
+			var parent = document.getElementsByClassName('video-box')[0];
+	
+	　　　　//添加 div
+	　　　　var iframe = document.createElement("iframe");
+	
+	　　　　//设置 div 属性，如 id
+	　　　　iframe.setAttribute("src", videoSrc);
+	
+	　　　　parent.appendChild(iframe);	
+		}
+	}
+	$('input').bind('keyup', function(event) {
+        if (event.keyCode == "13") {
+            search()
+        }
+	});
+
+	function closeMovie(){
+		document.getElementsByClassName('cont-box')[0].style.display = 'block'
+		document.getElementsByClassName('video-box')[0].style.display = 'none'
+		$('iframe').remove();
+	}
+	function closeList(){
+		$('.video-list').css("display","none")
+		$('.cont-box').css("display","block")
+		$('.video-list').empty();
+	}
+	function startMovie(src){
+		if(src.indexOf('html')===-1){
+			alert('该模块功能正在开发中')
+		}else{
+			$('.video-list').empty();
+			var videoSrc = 'http://api.greatchina56.com/?url=' + src;
+			document.getElementsByClassName('video-list')[0].style.display = 'none'
+			document.getElementsByClassName('video-box')[0].style.display = 'block'
+			var parent = document.getElementsByClassName('video-box')[0];
+	　　　　//添加 div
+	　　　　var iframe = document.createElement("iframe");
+
+	　　　　//设置 div 属性，如 id
+	　　　　iframe.setAttribute("src", videoSrc);
+
+	　　　　parent.appendChild(iframe);
+		}
+	}
+	function debounce(method,delay,duration){
+		var timer=null;
+		var begin=new Date();    
+		return function(){                
+			var context=this, args=arguments;
+			var current=new Date();        
+			clearTimeout(timer);
+			if(current-begin>=duration){
+				method.apply(context,args);
+				begin=current;
+			}else{
+				timer=setTimeout(function(){
+					method.apply(context,args);
+				},delay);
+			}
+		}
+	}
+</script>
+</body>
+</html>
