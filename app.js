@@ -1,4 +1,4 @@
-const express = require('express');
+﻿const express = require('express');
 const router = express.Router()
 const app = express();
 const bodyParser = require('body-parser') //请求信息由字符串转换成对象
@@ -35,7 +35,7 @@ app.get('/getMovie',(req,res,next)=>{
     const movieName = req.query.movieName
     let html = '';
     let searchArr = [];
-    https.get('https://v.qq.com/x/search/?q='+encodeURI('龙珠'),function(resc){
+    https.get('https://v.qq.com/x/search/?q='+encodeURI(movieName),function(resc){
         var fubiao = 0;
         resc.setEncoding('utf-8'); //防止中文乱码
         //监听data事件，每次取一块数据
@@ -120,7 +120,7 @@ app.get('/getMovie',(req,res,next)=>{
                                         }
                                     })
                                     promise3.then($c=>{
-                                        console.log($c('PlaylistItem').text())
+                                        // console.log($c('PlaylistItem').text())
                                         $c('videoPlayList').each((vi,vv)=>{   
                                             searchArr[parIdx].result.href.push({
                                                 srcHref: $c(vv).find('playUrl').text(), 
@@ -149,7 +149,9 @@ app.get('/getMovie',(req,res,next)=>{
                     })
                     promise2.then(()=>{
                     fubiao ++;
-                        if($('.result_item_v').length==fubiao+1){  //数据采集完毕
+                    console.log('fubiao',fubiao)
+                    console.log('result_item_v',$('.result_item_v').length)
+                        if($('.result_item_v').length==fubiao){  //数据采集完毕
                             fubiao = 0;
                             resolve1()
                         }
